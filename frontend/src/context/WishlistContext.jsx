@@ -1,0 +1,2 @@
+import React from "react";
+import {createContext,useContext,useEffect,useState} from 'react';const C=createContext();export function WishlistProvider({children}){const [items,setItems]=useState(()=>JSON.parse(localStorage.getItem('hp_wishlist')||'[]'));useEffect(()=>localStorage.setItem('hp_wishlist',JSON.stringify(items)),[items]);const toggle=p=>setItems(x=>x.some(a=>a.id===p.id)?x.filter(a=>a.id!==p.id):[...x,p]);return <C.Provider value={{items,toggle,isWish:id=>items.some(a=>a.id===id)}}>{children}</C.Provider>}export const useWishlist=()=>useContext(C);

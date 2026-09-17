@@ -1,0 +1,2 @@
+import React from "react";
+export default function PaymentMethod({value,onChange}){return <div className="form-card"><h3>Payment Method</h3><label className="radio"><input type="radio" checked={value==='COD'} onChange={()=>onChange('COD')}/> <span>Cash on Delivery <small>Pay when your order arrives</small></span></label><label className="radio"><input type="radio" checked={value==='BANK'} onChange={()=>onChange('BANK')}/> <span>Bank Transfer <small>We will contact you with payment details</small></span></label></div>}

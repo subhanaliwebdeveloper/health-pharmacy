@@ -1,0 +1,1 @@
+import {request} from './api';export const createOrder=data=>request('/orders',{method:'POST',body:JSON.stringify(data)});export const myOrders=()=>request('/orders/mine');export const orderDetails=id=>request(`/orders/${id}`);export const validateCoupon=(code,subtotal)=>request('/coupons/validate',{method:'POST',body:JSON.stringify({code,subtotal})});

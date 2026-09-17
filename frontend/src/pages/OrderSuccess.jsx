@@ -1,0 +1,2 @@
+import React from "react";
+import {Link,useSearchParams} from 'react-router-dom';export default function OrderSuccess(){const [sp]=useSearchParams();return <div className="success"><div className="success-icon">✓</div><h1>Order Placed Successfully!</h1><p>Your order <b>{sp.get('order')}</b> has been received.</p><div><Link className="btn-primary" to="/my-orders">Track My Order</Link><Link className="btn-outline" to="/products">Continue Shopping</Link></div></div>}

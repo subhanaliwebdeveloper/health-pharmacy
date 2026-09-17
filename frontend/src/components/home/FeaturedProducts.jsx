@@ -1,0 +1,2 @@
+import React from "react";
+import {useProducts} from '../../hooks/useProducts';import ProductGrid from '../products/ProductGrid';export default function FeaturedProducts(){const {data,loading}=useProducts('?limit=4&sort=popularity');return <section className="section"><div className="section-head"><div><span className="eyebrow">QUALITY CARE</span><h2>Featured Products</h2></div></div><ProductGrid products={data} loading={loading}/></section>}

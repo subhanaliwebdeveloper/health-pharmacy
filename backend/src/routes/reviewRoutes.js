@@ -1,0 +1,1 @@
+import {Router} from 'express';import * as c from '../controllers/reviewController.js';import {protect} from '../middleware/authMiddleware.js';import {adminOnly} from '../middleware/adminMiddleware.js';const r=Router();r.get('/',protect,adminOnly,c.list);r.post('/',protect,c.create);r.patch('/:id',protect,adminOnly,c.moderate);export default r;

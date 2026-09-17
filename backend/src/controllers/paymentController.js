@@ -1,0 +1,1 @@
+export async function methods(req,res){res.json([{id:'COD',name:'Cash on Delivery',enabled:true},{id:'BANK',name:'Bank Transfer',enabled:true},{id:'ONLINE',name:'Online Payment',enabled:false,note:'Connect your payment gateway keys to enable'}])}

@@ -1,0 +1,1 @@
+import {useEffect,useState} from 'react';import {getProducts} from '../services/productService';export function useProducts(query=''){const [data,setData]=useState([]),[loading,setLoading]=useState(true);useEffect(()=>{setLoading(true);getProducts(query).then(setData).catch(console.error).finally(()=>setLoading(false))},[query]);return {data,loading}}
