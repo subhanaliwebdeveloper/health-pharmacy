@@ -122,24 +122,19 @@ app.use(errorHandler);
    START SERVER
 ========================= */
 
-testDB()
-  .then(() => {
-    app.listen(env.port, () => {
-      console.log(
-        `API running on http://localhost:${env.port}`
-      );
-
-      console.log(
-        'Allowed CORS origins:',
-        allowedOrigins
-      );
+if (!process.env.VERCEL) {
+  testDB()
+    .then(() => {
+      app.listen(env.port, () => {
+        console.log(`API running on http://localhost:${env.port}`);
+        console.log('Allowed CORS origins:', allowedOrigins);
+      });
+    })
+    .catch((e) => {
+      console.error('Database connection failed:', e.message);
+      process.exit(1);
     });
-  })
-  .catch((e) => {
-    console.error(
-      'Database connection failed:',
-      e.message
-    );
+}
 
-    process.exit(1);
-  });
+/* Vercel serverless export */
+export default app;
