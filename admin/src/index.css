@@ -413,3 +413,102 @@
     min-width: 580px;
   }
 }
+/* =========================
+   CONTACT FORM - FINAL FIX
+========================= */
+
+.contact-form {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.contact-form label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #33433e !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.contact-form label.wide {
+  grid-column: 1 / -1 !important;
+}
+
+.contact-form input,
+.contact-form textarea {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  margin: 7px 0 0 !important;
+  padding: 10px 12px !important;
+  border: 1px solid #d7e2de !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #263b35 !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  outline: none !important;
+}
+
+.contact-form input {
+  height: 42px !important;
+}
+
+.contact-form textarea {
+  height: 110px !important;
+  min-height: 110px !important;
+  resize: vertical !important;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #0f9d58 !important;
+  box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.10) !important;
+}
+
+.contact-form button.btn-primary {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  min-height: 43px !important;
+  margin: 0 !important;
+}
+
+.contact-form .notice {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .contact-form {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    padding: 16px !important;
+  }
+
+  .contact-form label.wide {
+    grid-column: auto !important;
+  }
+
+  .contact-form button.btn-primary,
+  .contact-form .notice {
+    grid-column: auto !important;
+  }
+
+  .contact-form input {
+    height: 42px !important;
+  }
+
+  .contact-form textarea {
+    height: 110px !important;
+  }
+}
