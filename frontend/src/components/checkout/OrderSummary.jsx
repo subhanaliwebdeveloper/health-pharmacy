@@ -4,7 +4,7 @@ import { validateCoupon } from "../../services/orderService";
 
 export default function OrderSummary({
   subtotal,
-  delivery = 100,
+  delivery = 0,
   coupon,
   onCoupon,
   submitting,

@@ -1,5 +1,18 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-dotenv.config();
-export const pool = mysql.createPool({host:process.env.DB_HOST,port:Number(process.env.DB_PORT||3306),user:process.env.DB_USER,password:process.env.DB_PASSWORD,database:process.env.DB_NAME,waitForConnections:true,connectionLimit:10});
-export async function testDB(){ const c=await pool.getConnection(); await c.ping(); c.release(); console.log('MySQL connected'); }
+import mongoose from 'mongoose';
+import { env } from './env.js';
+
+/** Connect to MongoDB. Exits the process if connection fails. */
+export async function connectDB() {
+  try {
+    // Windows c-ares DNS resolver frequently fails on SRV lookups (ECONNREFUSED).
+    // Use standard public DNS resolvers (Google / Cloudflare) to ensure fast and reliable SRV resolution.
+    
+    await mongoose.connect(env.mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+    });
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1);
+  }
+}

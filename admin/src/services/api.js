@@ -1,1 +1,27 @@
-const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';export async function request(path,options={}){const token=localStorage.getItem('hp_admin_token');const headers=options.body instanceof FormData?{}:{'Content-Type':'application/json'};if(token)headers.Authorization=`Bearer ${token}`;const r=await fetch(`${API}${path}`,{...options,headers:{...headers,...options.headers}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.message||'Request failed');return d}export {API};
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+/**
+ * Central fetch wrapper for Admin panel.
+ * Uses HttpOnly cookie auth (`credentials: 'include'`).
+ * No manual localStorage token header is needed.
+ */
+export async function request(path, options = {}) {
+  const isFormData = options.body instanceof FormData;
+  const headers = isFormData
+    ? { ...(options.headers || {}) }
+    : { 'Content-Type': 'application/json', ...(options.headers || {}) };
+
+  const res = await fetch(`${API}${path}`, {
+    ...options,
+    headers,
+    credentials: 'include',
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || 'Request failed');
+  }
+  return data;
+}
+
+export { API };

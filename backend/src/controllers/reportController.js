@@ -1,38 +1,73 @@
-import {pool} from '../config/db.js';
+import Order from '../models/Order.js';
+import User from '../models/User.js';
+import Product from '../models/Product.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
-// Aggregated, real-data snapshot for the admin Reports page.
-export async function summary(req, res) {
-  const [[orderStats]] = await pool.query(
-    `SELECT
-      COUNT(*) total_orders,
-      COALESCE(SUM(CASE WHEN status <> 'cancelled' THEN total ELSE 0 END),0) total_revenue,
-      SUM(CASE WHEN status IN ('placed','confirmed','preparing','out_for_delivery') THEN 1 ELSE 0 END) pending_orders,
-      SUM(CASE WHEN status='delivered' THEN 1 ELSE 0 END) delivered_orders,
-      SUM(CASE WHEN status='cancelled' THEN 1 ELSE 0 END) cancelled_orders
-     FROM orders`
-  );
-  const [[customerStats]] = await pool.query(`SELECT COUNT(*) total_customers FROM users WHERE role='customer'`);
-  const [[productStats]] = await pool.query(`SELECT COUNT(*) total_products, SUM(CASE WHEN stock<10 THEN 1 ELSE 0 END) low_stock FROM products WHERE active=1`);
-  const [statusBreakdown] = await pool.query(`SELECT status, COUNT(*) count FROM orders GROUP BY status`);
-  const [recentOrders] = await pool.query(
-    `SELECT o.id, o.order_number, o.total, o.status, o.created_at, u.name customer_name
-     FROM orders o JOIN users u ON u.id=o.user_id ORDER BY o.created_at DESC LIMIT 8`
-  );
-  const [topProducts] = await pool.query(
-    `SELECT id, name, sales_count, stock FROM products ORDER BY sales_count DESC LIMIT 5`
-  );
+/** Aggregated, real-data snapshot for the admin Reports page. */
+export const summary = asyncHandler(async (req, res) => {
+  const [orderStats] = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        total_orders: { $sum: 1 },
+        total_revenue: {
+          $sum: { $cond: [{ $ne: ['$status', 'cancelled'] }, '$total', 0] },
+        },
+        pending_orders: {
+          $sum: {
+            $cond: [
+              { $in: ['$status', ['placed', 'confirmed', 'preparing', 'out_for_delivery']] },
+              1,
+              0,
+            ],
+          },
+        },
+        delivered_orders: { $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] } },
+        cancelled_orders: { $sum: { $cond: [{ $eq: ['$status', 'cancelled'] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  const total_customers = await User.countDocuments({ role: 'customer' });
+
+  const [productStats] = await Product.aggregate([
+    { $match: { active: true } },
+    {
+      $group: {
+        _id: null,
+        total_products: { $sum: 1 },
+        low_stock: { $sum: { $cond: [{ $lt: ['$stock', 10] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  const status_breakdown = await Order.aggregate([
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+    { $project: { status: '$_id', count: 1, _id: 0 } },
+  ]);
+
+  const recent_orders = await Order.find({})
+    .populate('user', 'name')
+    .select('order_number total status createdAt user')
+    .sort({ createdAt: -1 })
+    .limit(8);
+
+  const top_products = await Product.find({})
+    .select('name sales_count stock')
+    .sort({ sales_count: -1 })
+    .limit(5);
 
   res.json({
-    total_orders: Number(orderStats.total_orders) || 0,
-    total_revenue: Number(orderStats.total_revenue) || 0,
-    pending_orders: Number(orderStats.pending_orders) || 0,
-    delivered_orders: Number(orderStats.delivered_orders) || 0,
-    cancelled_orders: Number(orderStats.cancelled_orders) || 0,
-    total_customers: Number(customerStats.total_customers) || 0,
-    total_products: Number(productStats.total_products) || 0,
-    low_stock_products: Number(productStats.low_stock) || 0,
-    status_breakdown: statusBreakdown,
-    recent_orders: recentOrders,
-    top_products: topProducts
+    total_orders: orderStats?.total_orders || 0,
+    total_revenue: orderStats?.total_revenue || 0,
+    pending_orders: orderStats?.pending_orders || 0,
+    delivered_orders: orderStats?.delivered_orders || 0,
+    cancelled_orders: orderStats?.cancelled_orders || 0,
+    total_customers,
+    total_products: productStats?.total_products || 0,
+    low_stock_products: productStats?.low_stock || 0,
+    status_breakdown,
+    recent_orders,
+    top_products,
   });
-}
+});

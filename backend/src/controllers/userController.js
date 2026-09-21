@@ -1,5 +1,27 @@
-import {pool} from '../config/db.js';
-export async function all(req,res){const [rows]=await pool.query('SELECT id,name,email,phone,address,city,role,created_at FROM users ORDER BY created_at DESC');res.json(rows)}
-export async function one(req,res){const [rows]=await pool.query('SELECT id,name,email,phone,address,city,role,created_at FROM users WHERE id=?',[req.params.id]);if(!rows.length)return res.status(404).json({message:'Customer not found'});res.json(rows[0])}
-export async function ordersFor(req,res){const [rows]=await pool.query('SELECT id,order_number,total,status,payment_method,created_at FROM orders WHERE user_id=? ORDER BY created_at DESC',[req.params.id]);res.json(rows)}
-export async function updateProfile(req,res){const {name,phone,address,city}=req.body;await pool.query('UPDATE users SET name=?,phone=?,address=?,city=? WHERE id=?',[name,phone,address,city,req.user.id]);res.json({message:'Profile updated'})}
+import User from '../models/User.js';
+import Order from '../models/Order.js';
+import asyncHandler from '../utils/asyncHandler.js';
+
+export const all = asyncHandler(async (req, res) => {
+  const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+  res.json(users);
+});
+
+export const one = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password');
+  if (!user) return res.status(404).json({ message: 'Customer not found' });
+  res.json(user);
+});
+
+export const ordersFor = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.params.id })
+    .select('order_number total status payment_method createdAt')
+    .sort({ createdAt: -1 });
+  res.json(orders);
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { name, phone, address, city } = req.body;
+  await User.findByIdAndUpdate(req.user.id, { name, phone, address, city });
+  res.json({ message: 'Profile updated' });
+});

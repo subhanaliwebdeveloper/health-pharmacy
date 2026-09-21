@@ -1,1 +1,18 @@
-import {Router} from 'express'; import * as c from '../controllers/productController.js'; import {protect} from '../middleware/authMiddleware.js'; import {adminOnly} from '../middleware/adminMiddleware.js'; import {upload} from '../middleware/uploadMiddleware.js'; const r=Router();r.get('/',c.list);r.get('/admin/all',protect,adminOnly,c.adminList);r.get('/:id',c.getOne);r.post('/',protect,adminOnly,upload.single('image'),c.create);r.put('/:id',protect,adminOnly,upload.single('image'),c.update);r.delete('/:id',protect,adminOnly,c.remove);export default r;
+import { Router } from 'express';
+import * as c from '../controllers/productController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { adminOnly } from '../middleware/adminMiddleware.js';
+import { upload, uploadToCloudinary } from '../middleware/uploadMiddleware.js';
+
+const r = Router();
+
+r.get('/', c.list);
+r.get('/admin/all', protect, adminOnly, c.adminList);
+r.get('/:id', c.getOne);
+r.get('/:id/batches', c.getBatches);
+r.post('/:id/batches', protect, adminOnly, c.addBatch);
+r.post('/', protect, adminOnly, upload.single('image'), uploadToCloudinary('pharmacy/products'), c.create);
+r.put('/:id', protect, adminOnly, upload.single('image'), uploadToCloudinary('pharmacy/products'), c.update);
+r.delete('/:id', protect, adminOnly, c.remove);
+
+export default r;

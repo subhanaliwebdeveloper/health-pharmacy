@@ -1,38 +1,24 @@
-import { useEffect, useState } from "react";
-import { getProducts } from "../services/productService";
+import { useEffect, useState } from 'react';
+import { getProducts } from '../services/productService';
 
-export function useProducts(query = "") {
-  const [data, setData] = useState([]);
+/**
+ * Fetches products whenever `query` changes.
+ * No polling — data only refreshes on filter/param change.
+ */
+export function useProducts(query = '') {
+  const [data, setData]       = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
+    let cancelled = false;
+    setLoading(true);
 
-    const loadProducts = async () => {
-      try {
-        const result = await getProducts(query);
+    getProducts(query)
+      .then((result) => { if (!cancelled) setData(result); })
+      .catch(console.error)
+      .finally(() => { if (!cancelled) setLoading(false); });
 
-        if (mounted) {
-          setData(result);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadProducts();
-
-    // Automatically check for new products every 5 seconds
-    const interval = setInterval(loadProducts, 5000);
-
-    return () => {
-      mounted = false;
-      clearInterval(interval);
-    };
+    return () => { cancelled = true; };
   }, [query]);
 
   return { data, loading };

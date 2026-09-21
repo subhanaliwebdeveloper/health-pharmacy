@@ -1,1 +1,14 @@
-{"name":"pharmacy-ecommerce","private":true,"scripts":{"install:all":"npm --prefix backend install && npm --prefix frontend install && npm --prefix admin install","dev:api":"npm --prefix backend run dev","dev:customer":"npm --prefix frontend run dev","dev:admin":"npm --prefix admin run dev"},"dependencies":{"bcryptjs":"^3.0.3","dotenv":"^17.4.2","mysql2":"^3.24.4"}}
+{
+  "name": "pharmacy-ecommerce",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install && npm --prefix admin install",
+    "dev:api": "npm --prefix backend run dev",
+    "dev:customer": "npm --prefix frontend run dev",
+    "dev:admin": "npm --prefix admin run dev"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2"
+  }
+}

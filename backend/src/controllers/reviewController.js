@@ -1,4 +1,27 @@
-import {pool} from '../config/db.js';
-export async function list(req,res){const [r]=await pool.query('SELECT r.*,u.name customer_name,p.name product_name FROM reviews r JOIN users u ON u.id=r.user_id JOIN products p ON p.id=r.product_id ORDER BY r.created_at DESC');res.json(r)}
-export async function create(req,res){const {product_id,rating,comment}=req.body;await pool.query('INSERT INTO reviews(user_id,product_id,rating,comment,approved) VALUES(?,?,?,?,0)',[req.user.id,product_id,rating,comment||'']);res.status(201).json({message:'Review submitted for approval'})}
-export async function moderate(req,res){await pool.query('UPDATE reviews SET approved=? WHERE id=?',[Number(req.body.approved),req.params.id]);res.json({message:'Review updated'})}
+import Review from '../models/Review.js';
+import asyncHandler from '../utils/asyncHandler.js';
+
+export const list = asyncHandler(async (req, res) => {
+  const reviews = await Review.find({})
+    .populate('user', 'name')
+    .populate('product', 'name')
+    .sort({ createdAt: -1 });
+  res.json(reviews);
+});
+
+export const create = asyncHandler(async (req, res) => {
+  const { product_id, rating, comment } = req.body;
+  await Review.create({
+    user: req.user.id,
+    product: product_id,
+    rating,
+    comment: comment || '',
+    approved: false,
+  });
+  res.status(201).json({ message: 'Review submitted for approval' });
+});
+
+export const moderate = asyncHandler(async (req, res) => {
+  await Review.findByIdAndUpdate(req.params.id, { approved: Boolean(req.body.approved) });
+  res.json({ message: 'Review updated' });
+});

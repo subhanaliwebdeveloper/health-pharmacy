@@ -1,162 +1,131 @@
-import React, { useEffect, useState } from "react";
-import { request } from "../services/api";
-import { uploadToCloudinary } from "../services/cloudinary";
+import React, { useEffect, useState } from 'react';
+import { request } from '../services/api';
+import BatchManager from './BatchManager';
 
-const empty = {
-  name: "",
-  description: "",
-  price: "",
-  discount_price: "",
-  category_id: "",
-  brand: "",
-  stock: "",
-  sku: "",
-  requires_prescription: 0,
-  active: 1,
-  image: null,
-};
+export default function ProductForm({ categories = [], editing = null, onDone, onCancelEdit }) {
+  const [f, setF] = useState({
+    name: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    category_id: '',
+    brand: '',
+    stock: 0,
+    sku: '',
+    requires_prescription: false,
+    active: true,
+  });
 
-export default function ProductForm({
-  categories,
-  editing,
-  onDone,
-  onCancelEdit,
-}) {
-  const [f, setF] = useState(empty);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [batches, setBatches] = useState([]);
   const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState('');
+  const [err, setErr] = useState('');
 
   useEffect(() => {
     if (editing) {
       setF({
-        name: editing.name || "",
-        description: editing.description || "",
-        price: editing.price || "",
-        discount_price: editing.discount_price || "",
-        category_id: editing.category_id || "",
-        brand: editing.brand || "",
-        stock: editing.stock ?? "",
-        sku: editing.sku || "",
-        requires_prescription: editing.requires_prescription ? 1 : 0,
-        active: editing.active === 0 ? 0 : 1,
-        image: null,
+        name: editing.name || '',
+        description: editing.description || '',
+        price: editing.price ?? '',
+        discount_price: editing.discount_price ?? '',
+        category_id: editing.category?._id || editing.category || editing.category_id || '',
+        brand: editing.brand || '',
+        stock: editing.stock ?? 0,
+        sku: editing.sku || '',
+        requires_prescription: Boolean(editing.requires_prescription),
+        active: editing.active !== false,
       });
-
-      setImageUrl(
-        editing.image && editing.image.startsWith("http")
-          ? editing.image
-          : ""
-      );
-
-      setMsg("");
+      setImagePreview(editing.image || '');
+      setBatches(editing.batches || []);
+      setImageFile(null);
+      setMsg('');
+      setErr('');
     } else {
-      setF(empty);
-      setImageUrl("");
+      setF({
+        name: '',
+        description: '',
+        price: '',
+        discount_price: '',
+        category_id: '',
+        brand: '',
+        stock: 0,
+        sku: '',
+        requires_prescription: false,
+        active: true,
+      });
+      setImagePreview('');
+      setImageFile(null);
+      setBatches([]);
+      setMsg('');
+      setErr('');
     }
   }, [editing]);
 
-  const handleFileChange = async (event) => {
-    const selectedFile = event.target.files?.[0] || null;
-
-    if (!selectedFile) {
-      setF({ ...f, image: null });
-      setUploadProgress(0);
-      return;
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImagePreview(editing?.image || '');
     }
-
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-    if (cloudName && uploadPreset) {
-      try {
-        setUploading(true);
-        setUploadProgress(0);
-        setMsg("Uploading image to Cloudinary...");
-
-        const result = await uploadToCloudinary(selectedFile, {
-          cloudName,
-          uploadPreset,
-          onProgress: setUploadProgress,
-        });
-
-        const url = result?.secure_url || result?.url;
-
-        setF({ ...f, image: url || selectedFile.name });
-        setImageUrl(url || "");
-        setMsg("Image uploaded successfully.");
-      } catch (err) {
-        setF({ ...f, image: null });
-        setImageUrl("");
-        setMsg(err.message || "Image upload failed.");
-      } finally {
-        setUploading(false);
-        setUploadProgress(0);
-      }
-
-      return;
-    }
-
-    setF({ ...f, image: selectedFile });
-    setImageUrl("");
-    setUploadProgress(100);
-    setMsg("Cloudinary not configured; file will be sent to your server.");
   };
 
-  const handleImageUrl = (value) => {
-    setImageUrl(value);
-
-    // URL ko product image ke liye use karenge
-    setF({
-      ...f,
-      image: value.trim() || null,
-    });
-
-    if (value.trim()) {
-      setMsg("Image URL added.");
-    } else {
-      setMsg("");
-    }
+  const handleBatchesChange = (newBatches) => {
+    setBatches(newBatches);
+    const total = newBatches.reduce((sum, b) => sum + (Number(b.stock_qty || b.stock) || 0), 0);
+    setF((prev) => ({ ...prev, stock: total }));
   };
 
   const submit = async (e) => {
     e.preventDefault();
-
     setBusy(true);
-    setMsg("");
+    setMsg('');
+    setErr('');
 
     const fd = new FormData();
+    fd.append('name', f.name.trim());
+    fd.append('brand', f.brand.trim());
+    fd.append('sku', f.sku.trim());
+    fd.append('price', Number(f.price) || 0);
+    if (f.discount_price !== '') fd.append('discount_price', Number(f.discount_price));
+    if (f.category_id) fd.append('category_id', f.category_id);
+    fd.append('description', f.description.trim());
+    fd.append('requires_prescription', f.requires_prescription ? 1 : 0);
+    fd.append('active', f.active ? 1 : 0);
 
-    Object.entries(f).forEach(([k, v]) => {
-      if (v !== null) {
-        fd.append(k, v);
-      }
-    });
+    const totalStock = batches.length > 0
+      ? batches.reduce((sum, b) => sum + (Number(b.stock_qty || b.stock) || 0), 0)
+      : (Number(f.stock) || 0);
+    fd.append('stock', totalStock);
+    fd.append('batches', JSON.stringify(batches));
+
+    if (imageFile) {
+      fd.append('image', imageFile);
+    } else if (editing?.image) {
+      fd.append('image', editing.image);
+    }
 
     try {
-      if (editing) {
-        await request(`/products/${editing.id}`, {
-          method: "PUT",
+      const editId = editing?._id || editing?.id;
+      if (editId) {
+        await request(`/products/${editId}`, {
+          method: 'PUT',
           body: fd,
         });
-
-        setMsg("Product updated");
+        setMsg('Product updated successfully');
       } else {
-        await request("/products", {
-          method: "POST",
+        await request('/products', {
+          method: 'POST',
           body: fd,
         });
-
-        setMsg("Product created");
-        setF(empty);
-        setImageUrl("");
+        setMsg('Product created successfully');
       }
-
       onDone?.();
     } catch (err) {
-      setMsg(err.message);
+      setErr(err.message || 'Request failed');
     } finally {
       setBusy(false);
     }
@@ -164,16 +133,16 @@ export default function ProductForm({
 
   return (
     <form className="admin-form" onSubmit={submit}>
-      <div className="form-grid">
+      {err && <div className="err" style={{ marginBottom: '15px' }}>{err}</div>}
+      {msg && <div className="msg" style={{ marginBottom: '15px', color: 'var(--green)', fontWeight: 'bold' }}>{msg}</div>}
 
+      <div className="form-grid">
         <label>
-          Product Name
+          Product Name *
           <input
             required
             value={f.name}
-            onChange={(e) =>
-              setF({ ...f, name: e.target.value })
-            }
+            onChange={(e) => setF({ ...f, name: e.target.value })}
           />
         </label>
 
@@ -181,70 +150,7 @@ export default function ProductForm({
           Brand
           <input
             value={f.brand}
-            onChange={(e) =>
-              setF({ ...f, brand: e.target.value })
-            }
-          />
-        </label>
-
-        <label>
-          Price (Rs.)
-          <input
-            type="number"
-            required
-            value={f.price}
-            onChange={(e) =>
-              setF({ ...f, price: e.target.value })
-            }
-          />
-        </label>
-
-        <label>
-          Discount Price
-          <input
-            type="number"
-            value={f.discount_price}
-            onChange={(e) =>
-              setF({
-                ...f,
-                discount_price: e.target.value,
-              })
-            }
-          />
-        </label>
-
-        <label>
-          Category
-          <select
-            value={f.category_id}
-            onChange={(e) =>
-              setF({
-                ...f,
-                category_id: e.target.value,
-              })
-            }
-          >
-            <option value="">Select category</option>
-
-            {categories.map((c) => (
-              <option value={c.id} key={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Stock
-          <input
-            type="number"
-            value={f.stock}
-            onChange={(e) =>
-              setF({
-                ...f,
-                stock: e.target.value,
-              })
-            }
+            onChange={(e) => setF({ ...f, brand: e.target.value })}
           />
         </label>
 
@@ -252,178 +158,124 @@ export default function ProductForm({
           SKU
           <input
             value={f.sku}
-            onChange={(e) =>
-              setF({
-                ...f,
-                sku: e.target.value,
-              })
-            }
+            onChange={(e) => setF({ ...f, sku: e.target.value })}
           />
         </label>
 
-        {/* FILE IMAGE */}
         <label>
-          Product Image
+          Category
+          <select
+            value={f.category_id}
+            onChange={(e) => setF({ ...f, category_id: e.target.value })}
+          >
+            <option value="">Select Category</option>
+            {categories.map((c) => (
+              <option key={c._id || c.id} value={c._id || c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Price (Rs.) *
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            required
+            value={f.price}
+            onChange={(e) => setF({ ...f, price: e.target.value })}
+          />
+        </label>
+
+        <label>
+          Discount Price (Rs.)
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={f.discount_price}
+            onChange={(e) => setF({ ...f, discount_price: e.target.value })}
+          />
+        </label>
+
+        <label>
+          Aggregate Stock
+          <input
+            type="number"
+            min="0"
+            disabled={batches.length > 0}
+            value={f.stock}
+            onChange={(e) => setF({ ...f, stock: e.target.value })}
+          />
+        </label>
+
+        <label>
+          Product Image (Cloudinary)
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
           />
-        </label>
-
-        {/* IMAGE URL */}
-        <label className="wide">
-          Image URL
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(e) =>
-              handleImageUrl(e.target.value)
-            }
-            placeholder="https://example.com/medicine.jpg"
-          />
-          <small style={{ marginTop: 6, color: "#6b7b75" }}>
-            Paste a direct image URL from the web.
-          </small>
-        </label>
-
-        {/* IMAGE PREVIEW */}
-        {imageUrl && (
-          <div
-            className="wide"
-            style={{
-              marginTop: 4,
-              padding: 12,
-              border: "1px solid #dfe8e4",
-              borderRadius: 10,
-              background: "#f8fbfa",
-            }}
-          >
-            <small
-              style={{
-                display: "block",
-                marginBottom: 8,
-                fontWeight: 600,
-              }}
-            >
-              Image Preview
-            </small>
-
-            <img
-              src={imageUrl}
-              alt="Product preview"
-              style={{
-                width: 120,
-                height: 120,
-                objectFit: "contain",
-                borderRadius: 8,
-                background: "#fff",
-                border: "1px solid #e1e8e5",
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
-          </div>
-        )}
-
-        {uploading && (
-          <div className="wide">
-            <div
-              style={{
-                fontSize: 12,
-                marginBottom: 4,
-              }}
-            >
-              Uploading: {uploadProgress}%
-            </div>
-
-            <div
-              style={{
-                width: "100%",
-                height: 8,
-                background: "#e9ecef",
-                borderRadius: 999,
-              }}
-            >
-              <div
-                style={{
-                  width: `${uploadProgress}%`,
-                  height: "100%",
-                  background: "#28a745",
-                  borderRadius: 999,
-                }}
+          {imagePreview && (
+            <div className="image-preview-box">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="image-preview-thumb"
               />
             </div>
-          </div>
-        )}
-
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={!!f.requires_prescription}
-            onChange={(e) =>
-              setF({
-                ...f,
-                requires_prescription: e.target.checked
-                  ? 1
-                  : 0,
-              })
-            }
-          />
-          Prescription required
+          )}
         </label>
 
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={f.active === 1}
-            onChange={(e) =>
-              setF({
-                ...f,
-                active: e.target.checked ? 1 : 0,
-              })
-            }
-          />
-          Active (visible to customers)
-        </label>
+        <div className="wide">
+          <label>
+            Description
+            <textarea
+              rows={3}
+              value={f.description}
+              onChange={(e) => setF({ ...f, description: e.target.value })}
+            />
+          </label>
+        </div>
 
-        <label className="wide">
-          Description
-          <textarea
-            value={f.description}
-            onChange={(e) =>
-              setF({
-                ...f,
-                description: e.target.value,
-              })
-            }
-          />
-        </label>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={f.requires_prescription}
+              onChange={(e) => setF({ ...f, requires_prescription: e.target.checked })}
+            />
+            Requires Prescription (Rx)
+          </label>
+
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={f.active}
+              onChange={(e) => setF({ ...f, active: e.target.checked })}
+            />
+            Active
+          </label>
+        </div>
       </div>
 
-      <button
-        className="btn-admin"
-        disabled={busy || uploading}
-      >
-        {busy
-          ? "Saving..."
-          : editing
-          ? "Update Product"
-          : "Add Product"}
-      </button>
+      <BatchManager
+        batches={batches}
+        onChange={handleBatchesChange}
+      />
 
-      {editing && (
-        <button
-          type="button"
-          className="btn-admin ghost"
-          onClick={onCancelEdit}
-        >
-          Cancel Edit
+      <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+        <button type="submit" className="btn-admin" disabled={busy}>
+          {busy ? 'Saving...' : editing ? 'Update Product' : 'Create Product'}
         </button>
-      )}
-
-      {msg && <span className="msg">{msg}</span>}
+        {editing && (
+          <button type="button" className="btn-admin ghost" onClick={onCancelEdit}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

@@ -1,29 +1,36 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getCategories } from "../services/productService";
-import { useProducts } from "../hooks/useProducts";
-import ProductFilters from "../components/products/ProductFilters";
-import ProductGrid from "../components/products/ProductGrid";
-import ProductSearch from "../components/products/ProductSearch";
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { getCategories } from '../services/productService';
+import { useProducts } from '../hooks/useProducts';
+import { useDebounce } from '../hooks/useDebounce';
+import ProductFilters from '../components/products/ProductFilters';
+import ProductGrid from '../components/products/ProductGrid';
+import ProductSearch from '../components/products/ProductSearch';
 
 export default function Products() {
-  const [sp, setSp] = useSearchParams();
+  const [sp, setSp]     = useSearchParams();
   const [cats, setCats] = useState([]);
-  const search = sp.get("search") || "";
-  const category = sp.get("category") || "";
-  const sort = sp.get("sort") || "newest";
-  const [q, setQ] = useState(search);
+  const [q, setQ]       = useState(sp.get('search') || '');
+
+  const category = sp.get('category') || '';
+  const sort     = sp.get('sort') || 'newest';
+
+  // Only fire the API call after 300ms of typing inactivity
+  const debouncedQ = useDebounce(q, 300);
 
   useEffect(() => {
     getCategories().then(setCats).catch(() => setCats([]));
   }, []);
 
+  // Sync URL search param when debounced value settles
   useEffect(() => {
-    setQ(search);
-  }, [search]);
+    const next = new URLSearchParams(sp);
+    if (debouncedQ) next.set('search', debouncedQ);
+    else next.delete('search');
+    setSp(next, { replace: true });
+  }, [debouncedQ]);
 
-  const query = `?search=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&limit=50`;
+  const query = `?search=${encodeURIComponent(debouncedQ)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&limit=50`;
   const { data, loading } = useProducts(query);
 
   const updateParam = (key, value) => {
@@ -49,7 +56,7 @@ export default function Products() {
         <ProductFilters
           categories={cats}
           category={category}
-          onCategory={(value) => updateParam("category", value)}
+          onCategory={(value) => updateParam('category', value)}
         />
 
         <main className="min-w-0">
@@ -57,15 +64,12 @@ export default function Products() {
             <div className="flex-1">
               <ProductSearch
                 value={q}
-                onChange={(value) => {
-                  setQ(value);
-                  updateParam("search", value);
-                }}
+                onChange={(value) => setQ(value)}
               />
             </div>
             <select
               value={sort}
-              onChange={(e) => updateParam("sort", e.target.value)}
+              onChange={(e) => updateParam('sort', e.target.value)}
               className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none ring-0"
             >
               <option value="newest">Newest</option>

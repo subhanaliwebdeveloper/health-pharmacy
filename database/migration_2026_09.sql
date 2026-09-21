@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS settings (
   support_phone VARCHAR(50),
   support_email VARCHAR(150),
   address VARCHAR(255),
-  delivery_fee DECIMAL(10,2) DEFAULT 100,
-  free_delivery_threshold DECIMAL(10,2) DEFAULT 2000,
+  delivery_fee DECIMAL(10,2) DEFAULT 0,
+  free_delivery_threshold DECIMAL(10,2) DEFAULT 0,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 INSERT IGNORE INTO settings (id, store_name, support_phone, support_email, address, delivery_fee, free_delivery_threshold)
-VALUES (1, 'Health Pharmacy', '+92 300 1234567', 'support@healthpharmacy.pk', 'Multan, Punjab, Pakistan', 100, 2000);
+VALUES (1, 'Health Pharmacy', '+92 300 1234567', 'support@healthpharmacy.pk', 'Multan, Punjab, Pakistan', 0, 0);

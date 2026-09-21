@@ -6,6 +6,18 @@
 .btn-admin.ghost{background:#fff;color:var(--green);border:1px solid var(--green);margin-left:8px}
 .pill.placed,.pill.confirmed{background:#fff4df;color:#a66a00}
 .pill.preparing,.pill.out_for_delivery{background:#e7f0fe;color:#1a56c4}
+.pill.expired{background:#fff0ef;color:#c64e47;font-weight:700}
+.pill.expiring_soon{background:#fff8e6;color:#b25e00;font-weight:700}
+.pill.good{background:#e5f8ee;color:#078653}
+.pill.active{background:#e5f8ee;color:#078653}
+.pill.inactive{background:#f1f4f3;color:#7a8985}
+.batch-section{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.batch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) 100px;gap:10px;align-items:flex-end;margin-bottom:15px}
+.batch-table{width:100%;margin-top:10px}
+.image-preview-box{margin-top:10px;display:flex;align-items:center;gap:15px}
+.image-preview-thumb{width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#fafafa}
+.order-detail-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+@media(max-width:900px){.order-detail-grid{grid-template-columns:1fr}}
 .drawer-overlay{position:fixed;inset:0;background:#0b1f1a66;z-index:50;display:flex;justify-content:flex-end}
 .drawer{width:min(520px,100%);background:#fff;height:100%;overflow-y:auto;padding:26px;box-shadow:-10px 0 40px #0002}
 .drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
