@@ -1,18 +1,36 @@
 import mongoose from 'mongoose';
 import { env } from './env.js';
 
-/** Connect to MongoDB. Exits the process if connection fails. */
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+/** Connect to MongoDB with cached connection reuse across serverless invocations. */
 export async function connectDB() {
-  try {
-    // Windows c-ares DNS resolver frequently fails on SRV lookups (ECONNREFUSED).
-    // Use standard public DNS resolvers (Google / Cloudflare) to ensure fast and reliable SRV resolution.
-    
-    await mongoose.connect(env.mongoUri, {
-      serverSelectionTimeoutMS: 5000,
-    });
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection failed:', err.message);
-    process.exit(1);
+  if (cached.conn) {
+    return cached.conn;
   }
+
+  if (!cached.promise) {
+    const opts = {
+      serverSelectionTimeoutMS: 5000,
+    };
+
+    cached.promise = mongoose.connect(env.mongoUri, opts).then((mongooseInstance) => {
+      console.log('MongoDB connected');
+      return mongooseInstance;
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (err) {
+    cached.promise = null;
+    console.error('MongoDB connection failed:', err.message);
+    throw err;
+  }
+
+  return cached.conn;
 }

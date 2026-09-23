@@ -28,8 +28,6 @@ const app = express();
 
 app.use(
   helmet({
-    // Content Security Policy (CSP) is explicitly disabled because this service operates strictly
-    // as a REST JSON API and does not serve HTML, scripts, or styles to browsers.
     contentSecurityPolicy: false,
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
@@ -57,10 +55,7 @@ app.use(
       if (allowedOrigins.includes(origin)) return callback(null, true);
 
       // Dynamically allow Vercel preview deployment URLs matching project patterns
-      if (
-        origin.endsWith('.vercel.app') &&
-        (origin.includes('subhanaliwebdeveloper') || origin.includes('health-pharmacy'))
-      ) {
+      if (origin.endsWith('.vercel.app')) {
         return callback(null, true);
       }
 
@@ -83,11 +78,28 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 /* =========================
-   HEALTH CHECK
+   DATABASE CONNECTION MIDDLEWARE
 ========================= */
 
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* =========================
+   HEALTH CHECKS
+========================= */
+
+app.get('/', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'Health Pharmacy API' });
+  res.json({ ok: true, status: 'ok', service: 'Health Pharmacy API' });
 });
 
 /* =========================
@@ -114,7 +126,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 /* =========================
-   START SERVER
+   LOCAL DEV SERVER STARTUP
 ========================= */
 
 if (!process.env.VERCEL) {
