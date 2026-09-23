@@ -524,3 +524,35 @@
     height: 110px !important;
   }
 }
+
+/* Admin Login Password Toggle Styling */
+.admin-login .password-group {
+  position: relative;
+  width: 100%;
+}
+
+.admin-login .password-group input {
+  padding-right: 42px;
+}
+
+.admin-login .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  background: transparent;
+  border: 0;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin-login .toggle-password:hover {
+  color: var(--dark);
+  background: rgba(0, 0, 0, 0.05);
+}
