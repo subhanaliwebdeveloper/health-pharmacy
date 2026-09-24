@@ -45,22 +45,24 @@ export default function Login() {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             placeholder="Enter your email"
             required
+            autoComplete="email"
           />
         </label>
 
         <label>
           Password
-          <div className="password-field-wrap">
+          <div className="password-group">
             <input
               type={showPassword ? 'text' : 'password'}
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               placeholder="Enter your password"
               required
+              autoComplete="current-password"
             />
             <button
               type="button"
-              className="password-toggle-btn"
+              className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               title={showPassword ? 'Hide password' : 'Show password'}
@@ -91,4 +93,5 @@ export default function Login() {
     </div>
   );
 }
+
 

@@ -70,7 +70,7 @@ export default function Register() {
 
         <label>
           Password
-          <div className="password-field-wrap">
+          <div className="password-group">
             <input
               type={showPassword ? 'text' : 'password'}
               minLength="6"
@@ -78,10 +78,11 @@ export default function Register() {
               onChange={(e) => setF({ ...f, password: e.target.value })}
               placeholder="At least 6 characters"
               required
+              autoComplete="new-password"
             />
             <button
               type="button"
-              className="password-toggle-btn"
+              className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               title={showPassword ? 'Hide password' : 'Show password'}
@@ -103,7 +104,7 @@ export default function Register() {
 
         <label>
           Confirm Password
-          <div className="password-field-wrap">
+          <div className="password-group">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               minLength="6"
@@ -111,10 +112,11 @@ export default function Register() {
               onChange={(e) => setF({ ...f, confirmPassword: e.target.value })}
               placeholder="Re-enter your password"
               required
+              autoComplete="new-password"
             />
             <button
               type="button"
-              className="password-toggle-btn"
+              className="toggle-password"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
               title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
