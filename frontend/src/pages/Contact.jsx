@@ -16,7 +16,7 @@ export default function Contact() {
           <p>📞 +92 300 1234567</p>
           <p>✉ info@healthpharmacy.pk</p>
           <p>📍 123 Main Road, Faisalabad, Pakistan</p>
-          <p>🕘 Mon–Sat, 9 AM – 9 PM</p>
+          <p>🕘 Mon–Sun, 9 AM – 11:59 PM</p>
         </div>
 
         <form

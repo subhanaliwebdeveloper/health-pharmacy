@@ -36,7 +36,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <span>✚</span>
 
         <div>
-          <b>Health Pharmacy</b>
+          <b>HADI-Nutraceutical Pharmacy</b>
           <small>Admin Panel</small>
         </div>
 
