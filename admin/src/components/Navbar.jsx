@@ -26,16 +26,32 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           <span></span>
         </button>
 
-        <span className="mobile-title">Hadi Nutraceutical Pharmacy</span>
+        <div className="mobile-title">
+          <img
+            src="/hamdi.png"
+            alt="HADI-Nutraceutical Pharmacy"
+            className="navbar-brand-logo"
+          />
+
+          <span>HADI-Nutraceutical Pharmacy</span>
+        </div>
       </div>
 
       <div className="admin-user">
         <span>👤 {user?.name || 'Administrator'}</span>
+
         {role && (
-          <span className="pill approved" style={{ fontSize: '10px', textTransform: 'uppercase' }}>
+          <span
+            className="pill approved"
+            style={{
+              fontSize: '10px',
+              textTransform: 'uppercase',
+            }}
+          >
             {formatRole(role)}
           </span>
         )}
+
         <button type="button" onClick={logout}>
           Logout
         </button>
