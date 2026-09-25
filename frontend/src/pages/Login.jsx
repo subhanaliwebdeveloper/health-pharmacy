@@ -32,7 +32,7 @@ export default function Login() {
         <div className="auth-head">
           <span className="brand-icon">✚</span>
           <h1>Welcome Back!</h1>
-          <p>Login to your Health Pharmacy account</p>
+          <p>Login to your HAMDI-Nutraceutical Pharmacy account</p>
         </div>
 
         {err && <div className="error">{err}</div>}

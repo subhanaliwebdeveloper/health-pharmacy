@@ -62,10 +62,14 @@ export default function Header() {
             className="hp-brand"
             onClick={closeMenu}
           >
-            <span className="hp-brand-icon">✚</span>
+            <img
+              src="/hamdi-nutraceutical-logo.png"
+              alt="HAMDI-Nutraceutical Pharmacy"
+              className="hp-brand-logo"
+            />
 
             <span className="hp-brand-text">
-              Health<span>Pharmacy</span>
+              HAMDI-<span>Nutraceutical</span> Pharmacy
               <small>Trusted care, better health</small>
             </span>
           </Link>
@@ -231,10 +235,14 @@ export default function Header() {
             {/* MENU HEADER */}
             <div className="hp-mobile-menu-head">
               <div className="hp-mobile-menu-title">
-                <span className="hp-brand-icon">✚</span>
+                <img
+                  src="/hamdi-nutraceutical-logo.png"
+                  alt="HAMDI-Nutraceutical Pharmacy"
+                  className="hp-mobile-brand-logo"
+                />
 
                 <strong>
-                  Health<span>Pharmacy</span>
+                  HAMDI-<span>Nutraceutical</span> Pharmacy
                 </strong>
               </div>
 

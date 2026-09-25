@@ -7,9 +7,13 @@ export default function Footer() {
       <div className="footer-grid">
         <div>
           <div className="brand footer-brand">
-            <span className="brand-icon">✚</span>
+            <img
+              src="/hamdi-nutraceutical-logo.png"
+              alt="HAMDI-Nutraceutical Pharmacy"
+              className="footer-brand-logo"
+            />
             <span>
-              Health<span>Pharmacy</span>
+              HAMDI-<span>Nutraceutical</span> Pharmacy
               <small>Your trusted online pharmacy</small>
             </span>
           </div>
@@ -37,7 +41,7 @@ export default function Footer() {
           <span>✓ Fast delivery</span>
         </div>
       </div>
-      <div className="copyright">© 2026 Health Pharmacy. All rights reserved.</div>
+      <div className="copyright">© 2026 HAMDI-Nutraceutical Pharmacy. All rights reserved.</div>
     </footer>
   );
 }

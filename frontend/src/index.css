@@ -33,6 +33,146 @@ html {
   scroll-behavior: smooth;
 }
 
+/* =========================================================
+   HAMDI NUTRACEUTICAL PHARMACY - SPLASH SCREEN
+========================================================= */
+
+.hamdi-splash-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s ease-out, visibility 0.45s ease-out;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.hamdi-splash-screen.hamdi-splash-fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hamdi-splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  animation: hamdiSplashPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hamdi-splash-logo-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.hamdi-splash-logo {
+  max-width: 280px;
+  width: min(280px, 72vw);
+  height: auto;
+  max-height: 180px;
+  object-fit: contain;
+  display: block;
+}
+
+.hamdi-splash-brand {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(18px, 4.5vw, 24px);
+  font-weight: 800;
+  color: #173d35;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+}
+
+.hamdi-splash-brand span {
+  color: #0f9d58;
+}
+
+.hamdi-splash-tagline {
+  font-family: 'Open Sans', sans-serif;
+  font-size: clamp(11px, 2.8vw, 13px);
+  font-weight: 600;
+  color: #7a8985;
+  margin: 0 0 24px 0;
+  letter-spacing: 0.3px;
+}
+
+/* Subtle, minimal and professional loading bar */
+.hamdi-splash-loader-track {
+  width: 140px;
+  height: 3px;
+  background: #eaf3f0;
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hamdi-splash-loader-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(90deg, #0f9d58, #00a894);
+  border-radius: 99px;
+  animation: hamdiSplashLoading 1.2s ease-in-out infinite;
+}
+
+@keyframes hamdiSplashLoading {
+  0% {
+    left: -40%;
+    width: 30%;
+  }
+  50% {
+    left: 35%;
+    width: 50%;
+  }
+  100% {
+    left: 100%;
+    width: 30%;
+  }
+}
+
+@keyframes hamdiSplashPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hamdi-splash-container {
+    animation: none !important;
+  }
+  .hamdi-splash-loader-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+  .hamdi-splash-screen {
+    transition: opacity 0.15s ease-out, visibility 0.15s ease-out !important;
+  }
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -126,9 +266,35 @@ p {
 .hp-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-width: 215px;
+  gap: 12px;
   color: #173d35;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.hp-brand-logo {
+  height: 42px;
+  width: auto;
+  max-width: 52px;
+  object-fit: contain;
+  display: block;
+}
+
+.hp-mobile-brand-logo {
+  height: 36px;
+  width: auto;
+  max-width: 44px;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-brand-logo {
+  height: 38px;
+  width: auto;
+  max-width: 48px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .hp-brand-icon {
@@ -148,9 +314,9 @@ p {
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .hp-brand-text > span {
@@ -158,7 +324,7 @@ p {
 }
 
 .hp-brand-text small {
-  margin-top: 4px;
+  margin-top: 3px;
   font-family: 'Open Sans', sans-serif;
   color: #7a8985;
   font-size: 9px;
