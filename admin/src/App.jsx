@@ -13,7 +13,17 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
-    return <div className="loading-screen">Loading admin...</div>;
+    return (
+      <div className="loading-screen">
+        <img
+          src="/hamdi.png"
+          alt="HADI-Nutraceutical Pharmacy"
+          className="loading-logo"
+        />
+
+        <div>Loading admin...</div>
+      </div>
+    );
   }
 
   if (!user) {
