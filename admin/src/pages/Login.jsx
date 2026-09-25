@@ -30,7 +30,7 @@ export default function Login() {
       <form onSubmit={handleSubmit}>
         <div className="admin-logo">✚</div>
         <h1>Admin Portal</h1>
-        <p>Manage Health Pharmacy</p>
+        <p>Manage Hadi Nutraceutical Pharmacy</p>
 
         {err && <div className="err">{err}</div>}
 

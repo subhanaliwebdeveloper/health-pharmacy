@@ -37,8 +37,8 @@ export default function SplashScreen({ onFinish }) {
       role="status"
       aria-label="Loading HAMDI-Nutraceutical Pharmacy"
     >
-      <div className="hamdi-splash-container">
-        <div className="hamdi-splash-logo-box">
+      <div className="hadi-splash-container">
+        <div className="hadi-splash-logo-box">
           <img
             src="/hamdi-nutraceutical-logo.png"
             alt="HAMDI-Nutraceutical Pharmacy Logo"
@@ -48,7 +48,7 @@ export default function SplashScreen({ onFinish }) {
         </div>
 
         <h1 className="hamdi-splash-brand">
-          HAMDI-<span>Nutraceutical</span> Pharmacy
+          HADI-<span>Nutraceutical</span> Pharmacy
         </h1>
 
         <p className="hamdi-splash-tagline">

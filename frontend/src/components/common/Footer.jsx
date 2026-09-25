@@ -13,7 +13,7 @@ export default function Footer() {
               className="footer-brand-logo"
             />
             <span>
-              HAMDI-<span>Nutraceutical</span> Pharmacy
+              HADI-<span>Nutraceutical</span> Pharmacy
               <small>Your trusted online pharmacy</small>
             </span>
           </div>
@@ -31,7 +31,7 @@ export default function Footer() {
           <h4>Support</h4>
           <Link to="/about">About Us</Link>
           <Link to="/contact">Contact</Link>
-          <span>+92 300 1234567</span>
+          <span>+92 3043423454</span>
         </div>
 
         <div>
@@ -41,7 +41,7 @@ export default function Footer() {
           <span>✓ Fast delivery</span>
         </div>
       </div>
-      <div className="copyright">© 2026 HAMDI-Nutraceutical Pharmacy. All rights reserved.</div>
+      <div className="copyright">© 2026 HADI-Nutraceutical Pharmacy. All rights reserved.</div>
     </footer>
   );
 }

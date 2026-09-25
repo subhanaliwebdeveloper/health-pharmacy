@@ -49,7 +49,7 @@ export default function ProductCard({ p }) {
       </Link>
 
       <div className="product-info">
-        <small>{p.brand || 'HAMDI-Nutraceutical Pharmacy'}</small>
+        <small>{p.brand || 'HADI-Nutraceutical Pharmacy'}</small>
         {p.requires_prescription && <span className="rx">Rx</span>}
 
         <Link to={`/products/${p._id}`}>

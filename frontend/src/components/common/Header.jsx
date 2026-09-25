@@ -69,7 +69,7 @@ export default function Header() {
             />
 
             <span className="hp-brand-text">
-              HAMDI-<span>Nutraceutical</span> Pharmacy
+              HADI-<span>Nutraceutical</span> Pharmacy
               <small>Trusted care, better health</small>
             </span>
           </Link>
@@ -242,7 +242,7 @@ export default function Header() {
                 />
 
                 <strong>
-                  HAMDI-<span>Nutraceutical</span> Pharmacy
+                  HADI-<span>Nutraceutical</span> Pharmacy
                 </strong>
               </div>
 

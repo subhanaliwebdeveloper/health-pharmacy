@@ -26,7 +26,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           <span></span>
         </button>
 
-        <span className="mobile-title">Health Pharmacy</span>
+        <span className="mobile-title">Hadi Nutraceutical Pharmacy</span>
       </div>
 
       <div className="admin-user">

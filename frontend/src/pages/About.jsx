@@ -1,3 +1,12 @@
 import React from "react";
-export default function About(){return <div className="page"><div className="about-hero"><span className="eyebrow">ABOUT HAMDI-NUTRACEUTICAL PHARMACY</span><h1>Your Health Is Our Priority</h1><p>HAMDI-Nutraceutical Pharmacy is committed to quality medicines, healthcare products and convenient service.</p></div><div className="about-grid"><div><h2>Who We Are</h2><p>We make everyday healthcare shopping simple, transparent and accessible. Our catalogue focuses on genuine products, clear information and reliable delivery.</p></div><div className="values"><b>✓ Genuine Products</b><b>✓ Qualified Pharmacy Support</b><b>✓ Fast & Reliable Delivery</b><b>✓ Customer Satisfaction</b></div></div></div>}
+export default function About(){return <div className="page">
+    <div className="about-hero"><span className="eyebrow">ABOUT HADI NUTRACEUTICALS PHARMACY</span><h1>Your Health Is Our Priority</h1>
+    <p>HADI NUTRACEUTICALS PHARMACY is committed to quality medicines, healthcare products and convenient service.</p>
+    </div><div className="about-grid"><div><h2>Who We Are</h2>
+ <p>We make everyday healthcare shopping simple, transparent and accessible. Our catalogue focuses on genuine products, clear information and reliable delivery.</p>
+ </div><div className="values">
+ <b>✓ Genuine Products</b>
+ <b>✓ Qualified Pharmacy Support</b>
+ <b>✓ Fast & Reliable Delivery</b>
+   <b>✓ Customer Satisfaction</b></div></div></div>}
 
