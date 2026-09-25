@@ -556,3 +556,26 @@
   color: var(--dark);
   background: rgba(0, 0, 0, 0.05);
 }
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.loading-logo {
+  width: 75vw;
+  max-width: 420px;
+  height: auto;
+  max-height: 75vh;
+  object-fit: contain;
+  display: block;
+}

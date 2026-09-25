@@ -20,8 +20,6 @@ export default function App() {
           alt="HADI-Nutraceutical Pharmacy"
           className="loading-logo"
         />
-
-        <div>Loading admin...</div>
       </div>
     );
   }
@@ -33,7 +31,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className={`admin-layout ${sidebarOpen ? "sidebar-open" : ""}`}>
-        
+
         <Sidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
