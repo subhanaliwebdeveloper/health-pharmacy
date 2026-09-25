@@ -33,11 +33,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   return (
     <aside className={`sidebar ${sidebarOpen ? "sidebar-mobile-open" : ""}`}>
       <div className="admin-brand">
-         <img
-    src="/hamdi.png"
-    alt="HADI-Nutraceutical Pharmacy"
-    className="admin-brand-logo"
-  />
+        <span>✚</span>
 
         <div>
           <b>HADI-Nutraceutical Pharmacy</b>
